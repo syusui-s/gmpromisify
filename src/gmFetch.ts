@@ -112,7 +112,7 @@ const buildDetails = async (request: Request): Promise<GMRequestCompatible> => {
     throw new TypeError('Only follow is supported');
   }
 
-  const withCredentials = buildWithCredentials(request, window.location);
+  const withCredentials = buildWithCredentials(request, globalThis.location);
 
   return {
     method: checkHTTPMethod(request.method),
@@ -154,22 +154,35 @@ export const parseXHRHeaders = (gmHeaders: string | null): Headers => {
   return new Headers(entries);
 };
 
+const algHash: Record<string, string> = {
+  sha256: 'SHA-256',
+  sha384: 'SHA-384',
+  sha512: 'SHA-512',
+};
+
 /**
  * https://w3c.github.io/webappsec-subresource-integrity/#the-integrity-attribute
  */
-/*
-const verifyIntegrity = (integrity: string, data: string): boolean => {
+export const verifyIntegrity = async (integrity: string, data: Blob): Promise<void> => {
+  if (globalThis?.crypto?.subtle?.digest == null) {
+    throw new Error('digest function is not available.');
+  }
+
   const match = integrity.match(/^(sha(?:256|384|512))-([a-zA-Z0-9+/=]+)$/);
 
   if (!match) {
     throw new TypeError('unsupported alg or integrity format');
   }
 
-  const [, alg, val] = match;
+  const [, alg, expected] = match;
 
-  // window.crypto.subtle.digest
+  const hashAlgorithm = algHash[alg] || alg;
+  const digest = await globalThis.crypto.subtle.digest(hashAlgorithm, await data.arrayBuffer());
+  const actual = btoa(encodeArrayBufferAsIsomorphicEncodedString(digest));
+  if (actual !== expected) {
+    throw new Error('Integrity verification failed');
+  }
 };
-*/
 
 /**
  * Convert GM.Response to Response
@@ -188,12 +201,12 @@ export const buildResponse = (res: GM.Response<any>): Response => {
 /**
  * Supported status:
  *   init:
- *     - mode:        ignored.
- *     - credentials: partially supported.
- *     - cache:       ignored. (can be partially supported on Tampermonkey)
- *     - redirect:    ignored. (if non-"follow" value is specified, error log will be printed.)
- *     - integrity:   ignored. TBD
- *     - signal:      supported.
+ *     - mode:        Ignored.
+ *     - credentials: Supported.
+ *     - cache:       Ignored.
+ *     - redirect:    Ignored. (if non-"follow" value is specified, error log will be printed.)
+ *     - integrity:   Supported.
+ *     - signal:      Supported.
  *   response object:
  *     - redirect: always false even if redirect.
  *     - type:     always "default"
@@ -229,8 +242,17 @@ const gmFetch = async (
     const control = GM.xmlHttpRequest({
       ...details,
       onload(res) {
-        const response = buildResponse(res);
-        resolve(response);
+        const checkAndBuildResponse = async () => {
+          if (request.integrity) {
+            const body = checkBlob(res.response);
+            await verifyIntegrity(request.integrity, body);
+          }
+          return buildResponse(res);
+        };
+
+        checkAndBuildResponse()
+          .then((response) => resolve(response))
+          .catch((err) => reject(err));
       },
       onerror() {
         reject(new TypeError('NetworkError'));
