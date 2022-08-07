@@ -1,0 +1,79 @@
+import assert from 'assert';
+import {
+  encodeArrayBufferAsIsomorphicEncodedString,
+  parseXHRHeaders,
+  buildResponse,
+} from '@/gmFetch';
+
+test('encodeArrayBufferAsIsomorphicEncodedString should encode all byte data', () => {
+  const input = new Uint8Array(new ArrayBuffer(256));
+  for (let i = 0; i < 256; i += 1) input[i] = i;
+
+  const actual = encodeArrayBufferAsIsomorphicEncodedString(input);
+  for (let i = 0; i < 256; i += 1) assert(actual.charCodeAt(i) === i);
+});
+
+test('encodeArrayBufferAsIsomorphicEncodedString should encode long data', () => {
+  const input = new Uint8Array(new ArrayBuffer(1024 * 10));
+  for (let i = 0; i < input.length; i += 1) input[i] = i % 256;
+
+  const actual = encodeArrayBufferAsIsomorphicEncodedString(input);
+  for (let i = 0; i < input.length; i += 1) assert(actual.charCodeAt(i) === i % 256);
+});
+
+test('encodeArrayBufferAsIsomorphicEncodedString should return empty string if input is empty', () => {
+  const input = new Uint8Array(new ArrayBuffer(0));
+
+  const actual = encodeArrayBufferAsIsomorphicEncodedString(input);
+  assert(actual === '');
+});
+
+test('parseXHRHeader should parse standard headers', () => {
+  const xhrHeaders =
+    'content-type: text/html; charset=utf-8\r\nx-powered-by: Express\r\ncache-control: no-cache, no-store, must-revalidate\r\nlast-modified: Sat, 06 Aug 2022 18:33:05 GMT\r\n';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 4);
+  assert(actual.get('Content-Type') === 'text/html; charset=utf-8');
+  assert(actual.get('X-Powered-By') === 'Express');
+  assert(actual.get('Cache-Control') === 'no-cache, no-store, must-revalidate');
+  assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
+});
+
+test('parseXHRHeader should parse empty string', () => {
+  const xhrHeaders = '';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 0);
+});
+
+test('parseXHRHeader should parse colon contained value ', () => {
+  const xhrHeaders = 'A: B: C\r\nD: E: F\r\n';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 2);
+  assert(actual.get('A') === 'B: C');
+  assert(actual.get('D') === 'E: F');
+});
+
+test('buildResponse should return expected Response', async () => {
+  const gmResponse: GM.Response<undefined> = {
+    readyState: 4,
+    status: 200,
+    statusText: 'OK',
+    response: new Blob(['response']),
+    responseHeaders:
+      'Content-Type: text/html; charset=UTF-8\r\nServer: Dummy Server 1.2.3\r\nX-Frame-Options: SAMEORIGIN\r\n',
+    finalUrl: 'https://example.com/#ignored',
+    responseText: 'ignored',
+    responseXML: false,
+  };
+
+  const actual = buildResponse(gmResponse);
+
+  assert(actual != null);
+  assert(actual.status === 200);
+  assert(actual.statusText === 'OK');
+  assert((await actual.text()) === 'response');
+  assert([...actual.headers.keys()].length === 3);
+  assert(actual.headers.get('Content-Type') === 'text/html; charset=UTF-8');
+  assert(actual.headers.get('Server') === 'Dummy Server 1.2.3');
+  assert(actual.headers.get('X-Frame-Options') === 'SAMEORIGIN');
+});
