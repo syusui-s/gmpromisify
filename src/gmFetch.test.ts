@@ -42,6 +42,17 @@ test('parseXHRHeader should parse standard headers', () => {
   assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
 });
 
+test('parseXHRHeader should parse headers without preceding SP before value', () => {
+  const xhrHeaders =
+    'content-type:text/html; charset=utf-8\r\nx-powered-by:Express\r\ncache-control:no-cache, no-store, must-revalidate\r\nlast-modified:Sat, 06 Aug 2022 18:33:05 GMT\r\n';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 4);
+  assert(actual.get('Content-Type') === 'text/html; charset=utf-8');
+  assert(actual.get('X-Powered-By') === 'Express');
+  assert(actual.get('Cache-Control') === 'no-cache, no-store, must-revalidate');
+  assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
+});
+
 test('parseXHRHeader should return empty Headers if input is null', () => {
   const actual = parseXHRHeaders(null);
   assert([...actual.keys()].length === 0);

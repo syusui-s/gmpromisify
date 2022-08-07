@@ -114,12 +114,14 @@ const buildDetails = async (request: Request): Promise<GMRequestCompatible> => {
 
   const withCredentials = buildWithCredentials(request, globalThis.location);
 
+  const headers = buildGMHeaders(request.headers);
+
   return {
     method: checkHTTPMethod(request.method),
     url: request.url,
-    headers: buildGMHeaders(request.headers),
+    headers,
     binary: true,
-    timeout: 0,
+    timeout: undefined,
     responseType: 'blob',
     // Compatibility
     data: await buildData(request),
@@ -136,22 +138,24 @@ const buildDetails = async (request: Request): Promise<GMRequestCompatible> => {
  * https://developer.mozilla.org/ja/docs/Web/API/XMLHttpRequest/getAllResponseHeaders
  */
 export const parseXHRHeaders = (gmHeaders: string | null): Headers => {
+  const headers = new Headers();
+
   if (gmHeaders == null) {
-    return new Headers();
+    return headers;
   }
 
   const trimmedHeaders = gmHeaders.trim();
 
   if (trimmedHeaders.length === 0) {
-    return new Headers();
+    return headers;
   }
 
-  const entries = trimmedHeaders.split(/[\r\n]+/).map((line) => {
-    const [name, ...value] = line.split(': ');
-    return [name, value.join(': ')];
+  trimmedHeaders.split(/[\r\n]+/).forEach((line) => {
+    const [name, ...value] = line.split(':');
+    headers.set(name, value.join(':').trim());
   });
 
-  return new Headers(entries);
+  return headers;
 };
 
 const algHash: Record<string, string> = {
@@ -201,12 +205,14 @@ export const buildResponse = (res: GM.Response<any>): Response => {
 /**
  * Supported status:
  *   init:
- *     - mode:        Ignored.
- *     - credentials: Supported.
- *     - cache:       Ignored.
- *     - redirect:    Ignored. (if non-"follow" value is specified, error log will be printed.)
- *     - integrity:   Partially supported. Multiple integrities are not supported.
- *     - signal:      Supported.
+ *     - mode:           Ignored.
+ *     - credentials:    Supported.
+ *     - cache:          Ignored.
+ *     - redirect:       Ignored. (if non-"follow" value is specified, error log will be printed.)
+ *     - integrity:      Partially supported. Multiple integrities are not supported.
+ *     - signal:         Supported.
+ *     - referrer:       Ignored. TBD.
+ *     - referrerPolicy: Ignored
  *   response object:
  *     - redirect: always false even if redirect.
  *     - type:     always "default"
