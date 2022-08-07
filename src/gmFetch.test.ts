@@ -42,6 +42,11 @@ test('parseXHRHeader should parse standard headers', () => {
   assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
 });
 
+test('parseXHRHeader should return empty Headers if input is null', () => {
+  const actual = parseXHRHeaders(null);
+  assert([...actual.keys()].length === 0);
+});
+
 test('parseXHRHeader should parse empty string', () => {
   const xhrHeaders = '';
   const actual = parseXHRHeaders(xhrHeaders);
@@ -81,7 +86,7 @@ test('buildResponse should return expected Response', async () => {
   assert(actual.headers.get('X-Frame-Options') === 'SAMEORIGIN');
 });
 
-test('verifyIntegrity should deny invalid integrity', async () => {
+test('verifyIntegrity should deny malformed integrity', async () => {
   globalThis.crypto = webcrypto as typeof globalThis.crypto;
 
   await expect(async () => verifyIntegrity('', new Blob([]))).rejects.toThrow();
@@ -105,4 +110,28 @@ test('verifyIntegrity should allow valid integrity', async () => {
   const sha512Integrity =
     'sha512-HnuAvI7cVSyP7rJ4DhEUd+W8cEZfrBp3sps1mAw/DOSgNqbJRiA2gkvVaAHmKvfp/rpcIu2KWvh3v33hF9ysbQ==';
   await verifyIntegrity(sha512Integrity, new Blob([input]));
+});
+
+test('verifyIntegrity should deny invalid integrity', async () => {
+  globalThis.crypto = webcrypto as typeof globalThis.crypto;
+
+  const input = new Uint8Array(new ArrayBuffer(256));
+  for (let i = 0; i < input.length; i += 1) input[i] = i;
+
+  await expect(async () => {
+    const sha256Integrity = 'sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+    await verifyIntegrity(sha256Integrity, new Blob([input]));
+  }).rejects.toThrow();
+
+  await expect(async () => {
+    const sha384Integrity =
+      'sha384-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+    await verifyIntegrity(sha384Integrity, new Blob([input]));
+  }).rejects.toThrow();
+
+  await expect(async () => {
+    const sha512Integrity =
+      'sha512-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+    await verifyIntegrity(sha512Integrity, new Blob([input]));
+  }).rejects.toThrow();
 });
