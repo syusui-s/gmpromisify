@@ -205,7 +205,7 @@ export const buildResponse = (res: GM.Response<any>): Response => {
  *     - credentials: Supported.
  *     - cache:       Ignored.
  *     - redirect:    Ignored. (if non-"follow" value is specified, error log will be printed.)
- *     - integrity:   Supported.
+ *     - integrity:   Partially supported. Multiple integrities are not supported.
  *     - signal:      Supported.
  *   response object:
  *     - redirect: always false even if redirect.
