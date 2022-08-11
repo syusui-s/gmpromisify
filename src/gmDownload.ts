@@ -1,4 +1,4 @@
-type DownloadRequest = Tampermonkey.DownloadRequest & {
+type DownloadRequest = Omit<Tampermonkey.DownloadRequest, 'onload' | 'onerror' | 'ontimeout'> & {
   signal?: AbortSignal;
 };
 
