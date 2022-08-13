@@ -53,6 +53,22 @@ test('parseXHRHeader should parse headers without preceding SP before value', ()
   assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
 });
 
+test('parseXHRHeader should parse headers with Firefox-styled extra LF lines', () => {
+  const xhrHeaders =
+    'Content-Type:text/html; charset=utf-8\r\nX-Powered-By:Express\r\n' +
+    'Set-Cookie: A=123; Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\n' +
+    'B=456;  Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\n' +
+    'C=456;  Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\r\n';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 3);
+  assert(actual.get('Content-Type') === 'text/html; charset=utf-8');
+  assert(actual.get('X-Powered-By') === 'Express');
+  assert(
+    actual.get('Set-Cookie') ===
+      'A=123; Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax',
+  );
+});
+
 test('parseXHRHeader should return empty Headers if input is null', () => {
   const actual = parseXHRHeaders(null);
   assert([...actual.keys()].length === 0);

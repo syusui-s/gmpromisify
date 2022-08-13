@@ -150,9 +150,40 @@ export const parseXHRHeaders = (gmHeaders: string | null): Headers => {
     return headers;
   }
 
-  trimmedHeaders.split(/[\r\n]+/).forEach((line) => {
-    const [name, ...value] = line.split(':');
-    headers.set(name, value.join(':').trim());
+  let name = '';
+  let value = '';
+  // A sequence '\r\n' is strictly required.
+  trimmedHeaders.split(/(?:\r\n)+/).forEach((line) => {
+    const index = line.indexOf(':');
+    // The line with no colon (:) will be ignored.
+    if (index < 0) {
+      // obs-fold
+      if (/^[ \t]/.test(line) && name.length > 0 && value.length > 0) {
+        const appendValue = line.trim();
+        headers.set(name, `${value}, ${appendValue}`);
+      }
+      return;
+    }
+
+    name = line.substring(0, index);
+    // For Firefox-styled multi-lined headers.
+    [value] = line
+      .substring(index + 1)
+      .trim()
+      .split(/[\r\n]+/);
+
+    // Check that only allowed character is used. Ignored if invalid.
+    //
+    // Limitation for Set-Cookie:
+    //   According to 3.2.2 [RFC7320], Set-Cookie can appear in header multiple times.
+    //   However, only the first one is available with Chrome XHR.
+    //   On the other hand, Firefox generates a LF(\n)-separated string for multiple Set-Cookie(s)
+    //   --- it's considered as incompatible with specification because LF is not allowed ---
+    //   but Headers () does not support multiple values.
+    //   As for other headers, multiple headers can be comma-separated text. However, Set-Cookie cannot be.
+    if (!/^[ \t\x21-\x7e\x80-\xff]*$/.test(value)) return;
+
+    headers.set(name, value);
   });
 
   return headers;
