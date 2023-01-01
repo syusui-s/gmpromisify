@@ -1,0 +1,21 @@
+name: 'Setup'
+description: 'Install node and npm packages'
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 19
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: |
+        echo "npm_cache_dir=$(npm config get cache)" >> $GITHUB_ENV
+    - uses: actions/cache@v3
+      id: npm-cache
+      with:
+        path: ${{ env.npm_cache_dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: Install dependencies
+      run: npm ci
