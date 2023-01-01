@@ -1,5 +1,5 @@
 {
-  "name": "gmpromisify",
+  "name": "@syusui/gmpromisify",
   "version": "0.1.1",
   "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
   "main": "build/index.js",
