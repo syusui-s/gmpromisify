@@ -13,7 +13,6 @@ runs:
         echo "npm_cache_dir=$(npm config get cache)" >> $GITHUB_ENV
     - uses: actions/cache@v3
       id: npm-cache
-      shell: bash
       with:
         path: ${{ env.npm_cache_dir }}
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
