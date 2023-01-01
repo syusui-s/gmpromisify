@@ -5,7 +5,7 @@ import {
   encodeArrayBufferAsIsomorphicEncodedString,
   parseXHRHeaders,
   buildResponse,
-  verifyIntegrity,
+  verifyIntegrityWith,
 } from '@/gmFetch';
 
 test('encodeArrayBufferAsIsomorphicEncodedString should encode all byte data', () => {
@@ -114,7 +114,7 @@ test('buildResponse should return expected Response', async () => {
 });
 
 test('verifyIntegrity should deny malformed integrity', async () => {
-  globalThis.crypto = webcrypto as typeof globalThis.crypto;
+  const verifyIntegrity = verifyIntegrityWith(webcrypto as Crypto);
 
   await expect(async () => verifyIntegrity('', new Blob([]))).rejects.toThrow();
   await expect(async () => verifyIntegrity('sha256-', new Blob([]))).rejects.toThrow();
@@ -123,7 +123,7 @@ test('verifyIntegrity should deny malformed integrity', async () => {
 });
 
 test('verifyIntegrity should allow valid integrity', async () => {
-  globalThis.crypto = webcrypto as typeof globalThis.crypto;
+  const verifyIntegrity = verifyIntegrityWith(webcrypto as Crypto);
 
   const input = new Uint8Array(new ArrayBuffer(256));
   for (let i = 0; i < input.length; i += 1) input[i] = i;
@@ -140,7 +140,7 @@ test('verifyIntegrity should allow valid integrity', async () => {
 });
 
 test('verifyIntegrity should deny invalid integrity', async () => {
-  globalThis.crypto = webcrypto as typeof globalThis.crypto;
+  const verifyIntegrity = verifyIntegrityWith(webcrypto as Crypto);
 
   const input = new Uint8Array(new ArrayBuffer(256));
   for (let i = 0; i < input.length; i += 1) input[i] = i;
