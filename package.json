@@ -1,7 +1,7 @@
 {
   "name": "gmpromisify",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
   "main": "build/index.js",
   "module": "build/index.esm.js",
   "types": "build/index.d.ts",
