@@ -1,6 +1,6 @@
 {
   "name": "@syusui-s/gmpromisify",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
   "main": "build/index.js",
   "module": "build/index.esm.js",
