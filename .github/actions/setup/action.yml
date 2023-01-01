@@ -6,6 +6,7 @@ runs:
     - uses: actions/setup-node@v3
       with:
         node-version: 19
+        scope: '@syusui-s'
     - name: Get npm cache directory
       id: npm-cache-dir
       shell: bash
