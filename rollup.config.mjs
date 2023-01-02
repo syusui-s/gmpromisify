@@ -20,7 +20,13 @@ const bannerTemplate = `gmpromisify v<%= pkg.version %> by <%= pkg.author %>
 
 export default {
   input: 'src/index.ts',
-  plugins: [typescript()],
+  plugins: [
+    typescript({
+      declaration: true,
+      rootDir: 'src',
+      declarationDir: 'types',
+    }),
+  ],
   output: [
     {
       file: 'build/index.js',

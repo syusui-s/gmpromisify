@@ -4,7 +4,7 @@
   "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
   "main": "build/index.js",
   "module": "build/index.esm.js",
-  "types": "build/index.d.ts",
+  "types": "build/types/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "prepare": "husky install",
