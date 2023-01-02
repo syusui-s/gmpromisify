@@ -16,9 +16,9 @@ type HTTPMethod = typeof HTTPMethods[number];
  * The interface that has some additional properties which are supported by some implementations.
  */
 interface GMRequestCompatible<TContext = undefined> extends GM.Request<TContext> {
-  // GreaseMonkey
+  // for GreaseMonkey
   withCredentials?: boolean;
-  // Tampermonkey
+  // for Tampermonkey
   anonymous?: boolean;
 }
 
@@ -123,11 +123,11 @@ const buildDetails = async (request: Request): Promise<GMRequestCompatible> => {
     binary: true,
     timeout: undefined,
     responseType: 'blob',
-    // Compatibility
     data: await buildData(request),
-    // Tampermonkey
+    // Whether to include credentials
+    // for Tampermonkey
     anonymous: !withCredentials,
-    // GreaseMonkey
+    // for GreaseMonkey
     withCredentials,
   };
 };
@@ -150,38 +150,41 @@ export const parseXHRHeaders = (gmHeaders: string | null): Headers => {
     return headers;
   }
 
+  // These `name` and `value` contains the last value
   let name = '';
   let value = '';
-  // A sequence '\r\n' is strictly required.
-  trimmedHeaders.split(/(?:\r\n)+/).forEach((line) => {
+  // According to 2.2 [RFC9112], a recipient may recognize LF(\n) as a line terminator and ignore CR(\r).
+  // However, this implementation strictly requires a sequence CRLF('\r\n') for Firefox-styled multi-lined Set-Cookie.
+  // Firefox XHR returns multiple Set-Cookie as LF(\n) separated lines.
+  trimmedHeaders.split(/(\r\n)+/).forEach((line) => {
     const index = line.indexOf(':');
-    // The line with no colon (:) will be ignored.
+    // The line with no colon (:) is ignored.
     if (index < 0) {
-      // obs-fold
+      // According to 3.2.2 [RFC9112], obs-fold should be replaced with SP
       if (/^[ \t]/.test(line) && name.length > 0 && value.length > 0) {
         const appendValue = line.trim();
-        headers.set(name, `${value}, ${appendValue}`);
+        headers.set(name, `${value} ${appendValue}`);
       }
       return;
     }
 
     name = line.substring(0, index);
-    // For Firefox-styled multi-lined headers.
-    [value] = line
-      .substring(index + 1)
-      .trim()
-      .split(/[\r\n]+/);
+    value = line.substring(index + 1).trim();
 
-    // Check that only allowed character is used. Ignored if invalid.
-    //
-    // Limitation for Set-Cookie:
-    //   According to 3.2.2 [RFC7320], Set-Cookie can appear in header multiple times.
-    //   However, only the first one is available with Chrome XHR.
-    //   On the other hand, Firefox generates a LF(\n)-separated string for multiple Set-Cookie(s)
-    //   --- it's considered as incompatible with specification because LF is not allowed ---
-    //   but Headers () does not support multiple values.
-    //   As for other headers, multiple headers can be comma-separated text. However, Set-Cookie cannot be.
+    // Prohibited headers
+    if (/set-cookie2?/i.test(name)) return;
+
+    // Ignore if name is empty or some invalid character is used in name.
+    if (!/^[-!#$%&'*+.^|~\d\w]+$/.test(name)) return;
+
+    // Check that only allowed character is used in value. Ignored if invalid.
     if (!/^[ \t\x21-\x7e\x80-\xff]*$/.test(value)) return;
+
+    // Combine fields 5.3 [RFC9110]
+    const currentValue = headers.get(name);
+    if (currentValue != null) {
+      value = `${currentValue}, ${value}`;
+    }
 
     headers.set(name, value);
   });
@@ -238,14 +241,14 @@ export const buildResponse = (res: GM.Response<any>): Response => {
 };
 
 /**
- * Supported status:
+ * Support status:
  *   init:
  *     - mode:           Ignored.
  *     - credentials:    Supported.
  *     - cache:          Ignored.
  *     - redirect:       Ignored. (if non-"follow" value is specified, error log will be printed.)
  *     - integrity:      Partially supported. Multiple integrities are not supported.
- *     - signal:         Supported.
+ *     - signal:         Supported (only in Tampermonkey and Violentmonkey).
  *     - referrer:       Ignored. TBD.
  *     - referrerPolicy: Ignored
  *   response object:
@@ -312,7 +315,8 @@ const gmFetch = async (
           control.abort();
         });
       } else {
-        reject(new TypeError('abort is not supported in this implementation.'));
+        // eslint-disable-next-line no-console
+        console.warn('abort is not supported in this implementation.');
       }
     }
   });

@@ -65,6 +65,11 @@ AbortController is additionally supported. Please refer `src/gmDownload.ts` for 
 npm run build
 ```
 
+## Differences from other libraries
+
+### [https://github.com/mitchellmebane/GM_fetch](mitchellmebane/GM_fetch)
+- GM_fetch is originally coming from fetch polyfill. It contains some object definitions of fetch standard.
+- gmpromisify relies on the fetch implementation provided by the browser.
 
 ## LICENSE
 

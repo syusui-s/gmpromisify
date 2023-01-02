@@ -53,20 +53,30 @@ test('parseXHRHeader should parse headers without preceding SP before value', ()
   assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
 });
 
-test('parseXHRHeader should parse headers with Firefox-styled extra LF lines', () => {
+test('parseXHRHeader should ignore Firefox-styled Set-Cookie lines', () => {
   const xhrHeaders =
-    'Content-Type:text/html; charset=utf-8\r\nX-Powered-By:Express\r\n' +
+    'Content-Type:text/html; charset=utf-8\r\n' +
+    'X-Powered-By:Express\r\n' +
     'Set-Cookie: A=123; Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\n' +
-    'B=456;  Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\n' +
-    'C=456;  Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\r\n';
+    'B=456; Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\n' +
+    'C=456; Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax\r\n';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 2);
+  assert(actual.get('Content-Type') === 'text/html; charset=utf-8');
+  assert(actual.get('X-Powered-By') === 'Express');
+  assert(actual.get('Set-Cookie') === null);
+});
+
+test('parseXHRHeader should parse a header field with obs-fold as a single line', () => {
+  const xhrHeaders =
+    'Last-Modified: Sat, 06 Aug 2022 18:33:05 GMT\r\n' +
+    'Content-Type: text/html;\r\n\tcharset=utf-8\r\n' +
+    'X-Powered-By:Express\r\n';
   const actual = parseXHRHeaders(xhrHeaders);
   assert([...actual.keys()].length === 3);
   assert(actual.get('Content-Type') === 'text/html; charset=utf-8');
+  assert(actual.get('Last-Modified') === 'Sat, 06 Aug 2022 18:33:05 GMT');
   assert(actual.get('X-Powered-By') === 'Express');
-  assert(
-    actual.get('Set-Cookie') ===
-      'A=123; Expires=Sat, 13 Aug 2022 23:59:59 GMT; Secure; HttpOnly=true; Same-Site=Lax',
-  );
 });
 
 test('parseXHRHeader should return empty Headers if input is null', () => {
@@ -86,6 +96,18 @@ test('parseXHRHeader should parse colon contained value ', () => {
   assert([...actual.keys()].length === 2);
   assert(actual.get('A') === 'B: C');
   assert(actual.get('D') === 'E: F');
+});
+
+test('parseXHRHeader should ignore colon started lines ', () => {
+  const xhrHeaders =
+    'Content-Type: text/html; charset=utf-8\r\n' +
+    ': B\r\n' +
+    ': D\r\n' +
+    'X-Powered-By:Express\r\n';
+  const actual = parseXHRHeaders(xhrHeaders);
+  assert([...actual.keys()].length === 2);
+  assert(actual.get('Content-Type') === 'text/html; charset=utf-8');
+  assert(actual.get('X-Powered-By') === 'Express');
 });
 
 test('buildResponse should return expected Response', async () => {
