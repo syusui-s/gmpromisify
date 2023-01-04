@@ -144,19 +144,13 @@ export const parseXHRHeaders = (gmHeaders: string | null): Headers => {
     return headers;
   }
 
-  const trimmedHeaders = gmHeaders.trim();
-
-  if (trimmedHeaders.length === 0) {
-    return headers;
-  }
-
   // These `name` and `value` contains the last value
   let name = '';
   let value = '';
   // According to 2.2 [RFC9112], a recipient may recognize LF(\n) as a line terminator and ignore CR(\r).
   // However, this implementation strictly requires a sequence CRLF('\r\n') for Firefox-styled multi-lined Set-Cookie.
   // Firefox XHR returns multiple Set-Cookie as LF(\n) separated lines.
-  trimmedHeaders.split(/(\r\n)+/).forEach((line) => {
+  gmHeaders.split(/(\r\n)+/).forEach((line) => {
     const index = line.indexOf(':');
     // The line with no colon (:) is ignored.
     if (index < 0) {
@@ -180,13 +174,7 @@ export const parseXHRHeaders = (gmHeaders: string | null): Headers => {
     // Check that only allowed character is used in value. Ignored if invalid.
     if (!/^[ \t\x21-\x7e\x80-\xff]*$/.test(value)) return;
 
-    // Combine fields 5.3 [RFC9110]
-    const currentValue = headers.get(name);
-    if (currentValue != null) {
-      value = `${currentValue}, ${value}`;
-    }
-
-    headers.set(name, value);
+    headers.append(name, value);
   });
 
   return headers;
