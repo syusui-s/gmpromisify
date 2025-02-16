@@ -23,7 +23,7 @@ const buildDetails = (args: GMDownloadArgs): DownloadRequest => {
  * GM_download wrapper.
  */
 const gmDownload = (...args: GMDownloadArgs): Promise<void> => {
-  if (typeof GM_download === 'undefined') {
+  if (typeof globalThis.GM_download === 'undefined') {
     throw new Error('GM_download is not listed in @grant or not supported on this environment.');
   }
   const { signal, ...details } = buildDetails(args);
