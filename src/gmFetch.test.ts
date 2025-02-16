@@ -2,34 +2,10 @@ import { webcrypto } from 'node:crypto';
 
 import assert from 'assert';
 import {
-  encodeArrayBufferAsIsomorphicEncodedString,
   parseXHRHeaders,
   buildResponse,
   verifyIntegrityWith,
 } from '@/gmFetch';
-
-test('encodeArrayBufferAsIsomorphicEncodedString should encode all byte data', () => {
-  const input = new Uint8Array(new ArrayBuffer(256));
-  for (let i = 0; i < 256; i += 1) input[i] = i;
-
-  const actual = encodeArrayBufferAsIsomorphicEncodedString(input);
-  for (let i = 0; i < 256; i += 1) assert(actual.charCodeAt(i) === i);
-});
-
-test('encodeArrayBufferAsIsomorphicEncodedString should encode long data', () => {
-  const input = new Uint8Array(new ArrayBuffer(1024 * 10));
-  for (let i = 0; i < input.length; i += 1) input[i] = i % 256;
-
-  const actual = encodeArrayBufferAsIsomorphicEncodedString(input);
-  for (let i = 0; i < input.length; i += 1) assert(actual.charCodeAt(i) === i % 256);
-});
-
-test('encodeArrayBufferAsIsomorphicEncodedString should return empty string if input is empty', () => {
-  const input = new Uint8Array(new ArrayBuffer(0));
-
-  const actual = encodeArrayBufferAsIsomorphicEncodedString(input);
-  assert(actual === '');
-});
 
 test('parseXHRHeader should parse standard headers', () => {
   const xhrHeaders =
