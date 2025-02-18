@@ -1,6 +1,8 @@
 import assert from 'assert';
 import { buildResponse } from './gmFetch';
 
+import { test } from 'vitest';
+
 test('buildResponse should return expected Response', async () => {
   const gmResponse: GM.Response<undefined> = {
     readyState: 4,
