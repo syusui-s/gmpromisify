@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { test } from 'vitest';
 
-import parseXHRHeaders from '@/utils/parseXHRHeaders';
+import parseXHRHeaders from './parseXHRHeaders';
 
 test('parseXHRHeader should parse standard headers', () => {
   const xhrHeaders =

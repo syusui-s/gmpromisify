@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { buildResponse } from '@/gmFetch';
+import { buildResponse } from './gmFetch';
 
 test('buildResponse should return expected Response', async () => {
   const gmResponse: GM.Response<undefined> = {

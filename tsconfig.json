@@ -7,9 +7,6 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "noEmit": true,
     "esModuleInterop": true,
     "strict": true,

@@ -1,4 +1,4 @@
-import gmFetch from '@/gmFetch';
-import gmDownload from '@/gmDownload';
+import gmFetch from './gmFetch';
+import gmDownload from './gmDownload';
 
 export { gmFetch, gmDownload };

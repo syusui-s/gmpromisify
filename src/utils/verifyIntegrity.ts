@@ -1,4 +1,4 @@
-import arrayBufferToString from '@/utils/arrayBufferToString';
+import arrayBufferToString from './arrayBufferToString';
 
 const algHash: Record<string, string> = {
   sha256: 'SHA-256',

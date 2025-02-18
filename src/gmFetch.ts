@@ -1,6 +1,6 @@
-import parseXHRHeaders from '@/utils/parseXHRHeaders';
-import { verifyIntegrity } from '@/utils/verifyIntegrity';
-import arrayBufferToString from '@/utils/arrayBufferToString';
+import parseXHRHeaders from './utils/parseXHRHeaders';
+import { verifyIntegrity } from './utils/verifyIntegrity';
+import arrayBufferToString from './utils/arrayBufferToString';
 
 const HTTPMethods = [
   'GET',

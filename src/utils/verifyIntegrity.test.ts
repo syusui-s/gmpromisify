@@ -1,6 +1,6 @@
 import { webcrypto } from 'node:crypto';
 
-import { verifyIntegrityWith } from '@/utils/verifyIntegrity';
+import { verifyIntegrityWith } from './verifyIntegrity';
 
 import { test, expect } from 'vitest';
 

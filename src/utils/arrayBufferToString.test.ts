@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { test } from 'vitest';
 
-import arrayBufferToString from '@/utils/arrayBufferToString';
+import arrayBufferToString from './arrayBufferToString';
 
 test('arrayBufferToString should encode all byte data', () => {
   const buffer = new ArrayBuffer(256);
