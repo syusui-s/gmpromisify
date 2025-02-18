@@ -5,7 +5,7 @@
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": "./",
     "noEmit": true,
     "esModuleInterop": true,
