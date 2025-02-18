@@ -10,9 +10,13 @@
   "scripts": {
     "build": "rollup -c && tsc -p tsconfig.build.json",
     "prepare": "husky install",
-    "lint": "eslint --cache .",
-    "fix": "eslint --cache --fix .",
-    "test": "vitest run --no-watch"
+    "lint": "prettier --check . && eslint --cache .",
+    "fix": "eslint --cache --fix . && prettier --write .",
+    "eslint": "eslint --cache .",
+    "prettier": "prettier --write .",
+    "tsc": "tsc --noEmit",
+    "test": "vitest run --no-watch",
+    "clean": "rm -rf dist"
   },
   "author": "Shusui Moyatani",
   "license": "Apache-2.0",
