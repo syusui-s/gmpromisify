@@ -5,8 +5,8 @@
     "noEmit": false,
     "emitDeclarationOnly": false,
     "declaration": true,
-    "declarationDir": "build/types",
-    "outDir": "build",
+    "declarationDir": "dist/types",
+    "outDir": "dist",
   },
   "incude": [
     "src/**/*.ts",

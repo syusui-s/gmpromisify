@@ -17,7 +17,7 @@ Currently, these functions are available:
 // @name     gmPromisify Example
 // @include  http*
 // @grant    GM.xmlHttpRequest
-// @require  https://github.com/syusui-s/gmpromisify/
+// @require  https://cdn.jsdelivr.net/npm/@syusui-s/gmpromisify/dist/index.iife.js
 // ==/UserScript==
 
 (async () => {

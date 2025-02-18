@@ -23,14 +23,14 @@ export default {
   plugins: [typescript()],
   output: [
     {
-      file: 'build/index.iife.js',
+      file: 'dist/index.iife.js',
       format: 'iife',
       name: 'gmPromisify',
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       plugins: [banner.default(bannerTemplate)],
     },
     {
-      file: 'build/index.iife.min.js',
+      file: 'dist/index.iife.min.js',
       format: 'iife',
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       plugins: [terser(), banner.default(bannerTemplate)],

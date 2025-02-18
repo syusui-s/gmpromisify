@@ -2,13 +2,11 @@
   "name": "@syusui-s/gmpromisify",
   "version": "0.1.8",
   "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
-  "files": [
-    "build"
-  ],
+  "files": ["dist"],
   "type": "module",
-  "main": "build/index.js",
-  "module": "build/index.esm.js",
-  "types": "build/types/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "rollup -c && tsc -p tsconfig.build.json",
     "prepare": "husky install",
