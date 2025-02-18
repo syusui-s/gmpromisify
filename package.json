@@ -2,7 +2,9 @@
   "name": "@syusui-s/gmpromisify",
   "version": "0.1.8",
   "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -28,7 +30,6 @@
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
     "eslint": "^8.31.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^3.5.2",
     "eslint-plugin-import": "^2.26.0",
