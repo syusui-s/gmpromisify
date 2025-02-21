@@ -11,7 +11,7 @@
   "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "rollup -c && tsc -p tsconfig.build.json",
-    "prepare": "husky install",
+    "prepare": "husky",
     "lint": "prettier --check . && eslint --cache .",
     "fix": "eslint --cache --fix . && prettier --write .",
     "eslint": "eslint --cache .",
