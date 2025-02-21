@@ -45,7 +45,13 @@
     "vitest": "^3.0.6"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint --cache --fix"
+    "*.{js,ts}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
+    "!(*.js|*.ts)": [
+      "prettier --write"
+    ]
   },
   "nyc": {
     "include": [
