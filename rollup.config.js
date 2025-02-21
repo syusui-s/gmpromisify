@@ -29,7 +29,11 @@ const bannerTemplate = async () => {
 
 export default {
   input: 'src/index.ts',
-  plugins: [typescript()],
+  plugins: [
+    typescript({
+      outputToFilesystem: true,
+    }),
+  ],
   output: [
     {
       file: 'dist/index.iife.js',
