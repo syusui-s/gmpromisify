@@ -1,4 +1,4 @@
-gmPromisify : Promisified GM functions
+gmpromisify : Promisified GM functions
 ===
 
 gmPromisify is a library which provides [promisified](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) versions of Greasemonkey functions.
