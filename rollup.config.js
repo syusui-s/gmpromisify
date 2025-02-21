@@ -1,8 +1,16 @@
-import typescript from '@rollup/plugin-typescript';
-import terser from '@rollup/plugin-terser';
-import banner from 'rollup-plugin-banner';
+import fs from 'node:fs/promises';
 
-const bannerTemplate = `gmpromisify v<%= pkg.version %> by <%= pkg.author %>
+import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import banner2 from 'rollup-plugin-banner2';
+
+const bannerTemplate = async () => {
+  const packageJson = await fs.readFile('./package.json', 'utf-8');
+  /** @type {{ version: string; author: string; }} */
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const pkg = JSON.parse(packageJson);
+
+  return `gmpromisify v${pkg.version} by ${pkg.author}
 
    Copyright 2022 <%= pkg.author %>
 
@@ -17,6 +25,7 @@ const bannerTemplate = `gmpromisify v<%= pkg.version %> by <%= pkg.author %>
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.`;
+};
 
 export default {
   input: 'src/index.ts',
@@ -26,14 +35,12 @@ export default {
       file: 'dist/index.iife.js',
       format: 'iife',
       name: 'gmPromisify',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      plugins: [banner.default(bannerTemplate)],
+      plugins: [banner2(bannerTemplate)],
     },
     {
       file: 'dist/index.iife.min.js',
       format: 'iife',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      plugins: [terser(), banner.default(bannerTemplate)],
+      plugins: [terser(), banner2(bannerTemplate)],
       name: 'gmPromisify',
     },
   ],
