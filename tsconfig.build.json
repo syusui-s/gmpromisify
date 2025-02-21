@@ -6,13 +6,12 @@
     "emitDeclarationOnly": false,
     "declaration": true,
     "declarationDir": "dist/types",
-    "outDir": "dist",
+    "outDir": "dist"
   },
-  "incude": [
-    "src/**/*.ts",
+  "include": [
+    "src/**/*.ts"
   ],
   "exclude": [
-    "**/*.test.ts",
-    "vitest.config.ts",
-  ],
+    "**/*.test.ts"
+  ]
 }

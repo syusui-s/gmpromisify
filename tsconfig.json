@@ -8,19 +8,19 @@
     "moduleResolution": "bundler",
     "baseUrl": "./",
     "noEmit": true,
+    "allowJs": true,
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx",
     "**/*.js",
-    "**/*.jsx",
-    "./.eslintrc.js"
+    "**/*.mjs",
   ],
   "exclude": [
-    "./node_modules",
-    "./dist"
+    "./node_modules/",
+    "./dist/",
+    "./.rollup.cache/"
   ]
 }
