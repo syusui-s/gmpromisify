@@ -30,6 +30,17 @@ test('verifyIntegrity should allow valid integrity', async () => {
   await verifyIntegrity(sha512Integrity, new Blob([input]));
 });
 
+test('verifyIntegrity should allow valid multiple integrities', async () => {
+  const verifyIntegrity = verifyIntegrityWith(webcrypto as Crypto);
+
+  const input = new Uint8Array(new ArrayBuffer(256));
+  for (let i = 0; i < input.length; i += 1) input[i] = i;
+
+  const multipleIntegrities =
+    'sha256-QK/y6dLYki5Hr9RkjmlnSXFYeF+9Hahw5xECZr+USIA= sha384-/9rr/2XtBc9ADwIhxMz7SyEE+2pR+H5AvmxDCThr/ewokukXmzRjIzGllZJzfbXF sha512-HnuAvI7cVSyP7rJ4DhEUd+W8cEZfrBp3sps1mAw/DOSgNqbJRiA2gkvVaAHmKvfp/rpcIu2KWvh3v33hF9ysbQ==';
+  await verifyIntegrity(multipleIntegrities, new Blob([input]));
+});
+
 test('verifyIntegrity should deny invalid integrity', async () => {
   const verifyIntegrity = verifyIntegrityWith(webcrypto as Crypto);
 

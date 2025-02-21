@@ -16,19 +16,22 @@ export const verifyIntegrityWith =
       throw new Error('digest function is not available.');
     }
 
-    const match = integrity.match(/^(sha(?:256|384|512))-([a-zA-Z0-9+/=]+)$/);
+    const integrities = integrity.trim().split(/\s+/);
+    for (const part of integrities) {
+      const match = part.match(/^(sha(?:256|384|512))-([a-zA-Z0-9+/=]+)$/);
 
-    if (!match) {
-      throw new TypeError('unsupported alg or integrity format');
-    }
+      if (!match) {
+        throw new TypeError('unsupported alg or integrity format');
+      }
 
-    const [, alg, expected] = match;
+      const [, alg, expected] = match;
 
-    const hashAlgorithm = algHash[alg] || alg;
-    const digest = await globalThis.crypto.subtle.digest(hashAlgorithm, await data.arrayBuffer());
-    const actual = btoa(arrayBufferToString(digest));
-    if (actual !== expected) {
-      throw new Error('Integrity verification failed');
+      const hashAlgorithm = algHash[alg] || alg;
+      const digest = await globalThis.crypto.subtle.digest(hashAlgorithm, await data.arrayBuffer());
+      const actual = btoa(arrayBufferToString(digest));
+      if (actual !== expected) {
+        throw new Error('Integrity verification failed');
+      }
     }
   };
 
