@@ -77,3 +77,4 @@ tags
 
 .rollup.cache/
 dist/
+syusui-s-gmpromisify-*.tgz
