@@ -1,8 +1,8 @@
 import { webcrypto } from 'node:crypto';
 
-import { verifyIntegrityWith } from './verifyIntegrity';
-
 import { test, expect } from 'vitest';
+
+import { verifyIntegrityWith } from './verifyIntegrity';
 
 test('verifyIntegrity should deny malformed integrity', async () => {
   const verifyIntegrity = verifyIntegrityWith(webcrypto as Crypto);

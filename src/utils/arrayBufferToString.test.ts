@@ -1,4 +1,5 @@
 import assert from 'assert';
+
 import { test } from 'vitest';
 
 import arrayBufferToString from './arrayBufferToString';

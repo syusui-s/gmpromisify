@@ -1,6 +1,6 @@
+import arrayBufferToString from './utils/arrayBufferToString';
 import parseXHRHeaders from './utils/parseXHRHeaders';
 import { verifyIntegrity } from './utils/verifyIntegrity';
-import arrayBufferToString from './utils/arrayBufferToString';
 
 const HTTPMethods = [
   'GET',
@@ -130,7 +130,7 @@ export const buildResponse = (res: GM.Response<any>): Response => {
  *     - cache:          Ignored.
  *     - redirect:       Ignored. (if non-"follow" value is specified, error log will be printed.)
  *     - integrity:      Partially supported. Multiple integrities are not supported.
- *     - signal:         Supported (only in Tampermonkey and Violentmonkey).
+ *     - signal:         Partially Supported (only in Tampermonkey and Violentmonkey).
  *     - referrer:       Ignored. TBD.
  *     - referrerPolicy: Ignored
  *   response object:
@@ -178,6 +178,7 @@ const gmFetch = async (
 
         checkAndBuildResponse()
           .then((response) => resolve(response))
+          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
           .catch((err) => reject(err));
       },
       onerror() {
@@ -189,7 +190,9 @@ const gmFetch = async (
       onabort() {
         reject(new DOMException('The request was aborted.', 'AbortError'));
       },
-    }) as GMXHRControl;
+    }) as (GMXHRControl | undefined);
+    // GM.xmlHttpRequest returns undefined in GreaseMonkey
+    // but returns GMXHRControl in Tampermonkey and Violentmonkey.
 
     if (request.signal !== undefined) {
       if (control != null) {
@@ -197,7 +200,6 @@ const gmFetch = async (
           control.abort();
         });
       } else {
-        // eslint-disable-next-line no-console
         console.warn('abort is not supported in this implementation.');
       }
     }
