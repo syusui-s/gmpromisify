@@ -13,14 +13,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.js",
-    "**/*.mjs",
-  ],
-  "exclude": [
-    "./node_modules/",
-    "./dist/",
-    "./.rollup.cache/"
-  ]
+  "include": ["**/*.ts", "**/*.js", "**/*.mjs"],
+  "exclude": ["./node_modules/", "./dist/", "./.rollup.cache/"]
 }

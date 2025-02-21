@@ -14,7 +14,7 @@ const HTTPMethods = [
   'CONNECT',
 ] as const;
 
-type HTTPMethod = typeof HTTPMethods[number];
+type HTTPMethod = (typeof HTTPMethods)[number];
 
 /**
  * The interface that has some additional properties which are supported by some implementations.
@@ -190,7 +190,7 @@ const gmFetch = async (
       onabort() {
         reject(new DOMException('The request was aborted.', 'AbortError'));
       },
-    }) as (GMXHRControl | undefined);
+    }) as GMXHRControl | undefined;
     // GM.xmlHttpRequest returns undefined in GreaseMonkey
     // but returns GMXHRControl in Tampermonkey and Violentmonkey.
 

@@ -8,10 +8,6 @@
     "declarationDir": "dist/types",
     "outDir": "dist"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.test.ts"]
 }

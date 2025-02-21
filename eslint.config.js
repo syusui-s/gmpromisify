@@ -31,11 +31,7 @@ export default typescriptEslint.config(
     },
   },
   {
-    files: [
-      '**/*.{ts,js,mjs}',
-      'eslint.config.js',
-      'rollup.config.js',
-    ],
+    files: ['**/*.{ts,js,mjs}', 'eslint.config.js', 'rollup.config.js'],
     extends: [
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       pluginImport.flatConfigs.recommended,
