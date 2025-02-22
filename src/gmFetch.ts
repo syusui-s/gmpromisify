@@ -124,33 +124,6 @@ export const buildResponse = (res: GM.Response<any>): Response => {
   });
 };
 
-/**
- * Support status:
- *   init:
- *     - mode:           Ignored.
- *     - credentials:    Supported.
- *     - cache:          Ignored.
- *     - redirect:       Ignored. (if non-"follow" value is specified, error log will be printed.)
- *     - integrity:      Partially supported. Multiple integrities are not supported.
- *     - signal:         Partially Supported (only in Tampermonkey and Violentmonkey).
- *     - referrer:       Ignored. TBD.
- *     - referrerPolicy: Ignored
- *   response object:
- *     - redirect: always false even if redirect.
- *     - type:     always "default"
- *
- * GreaseMonkey: https://wiki.greasespot.net/GM.xmlHttpRequest
- *   https://github.com/greasemonkey/greasemonkey/blob/efd22a93121225ada47f2fe9f021af0ab6100c21/src/bg/api-provider-source.js#L252
- *   https://github.com/greasemonkey/greasemonkey/blob/efd22a93121225ada47f2fe9f021af0ab6100c21/src/bg/on-user-script-xhr.js#L23
- *
- * Tampermonkey https://www.tampermonkey.net/documentation.php#GM_xmlhttpRequest
- *   NOTE: very old version of Tampermonkey
- *   https://github.com/Tampermonkey/tampermonkey/blob/07f668cd1cabb2939220045839dec4d95d2db0c8/src/xmlhttprequest.js
- *
- * Violentmonkey: https://violentmonkey.github.io/api/gm/#gm_xmlhttprequest
- *
- * Fetch Standard https://fetch.spec.whatwg.org/#fetch-method
- */
 const gmFetch = async (
   resource: string | URL | RequestInfo,
   init: RequestInit | undefined = {},
