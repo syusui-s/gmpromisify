@@ -74,12 +74,11 @@ const buildWithCredentials = (request: Request, location: Location): boolean => 
   switch (request.credentials) {
     case 'include':
       return true;
-    case 'same-origin':
-      return location.origin === url.origin;
     case 'omit':
       return false;
+    case 'same-origin':
     default:
-      throw new TypeError('Unknown credentials type.');
+      return location.origin === url.origin;
   }
 };
 
