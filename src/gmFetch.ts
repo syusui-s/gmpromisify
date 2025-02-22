@@ -150,7 +150,7 @@ export const buildResponse = (res: GM.Response<any>): Response => {
  * Fetch Standard https://fetch.spec.whatwg.org/#fetch-method
  */
 const gmFetch = async (
-  resource: RequestInfo,
+  resource: string | URL | RequestInfo,
   init: RequestInit | undefined = {},
 ): Promise<Response> => {
   if (GM.xmlHttpRequest == null) {

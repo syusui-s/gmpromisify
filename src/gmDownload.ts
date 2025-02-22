@@ -2,10 +2,10 @@ type DownloadRequest = Omit<Tampermonkey.DownloadRequest, 'onload' | 'onerror' |
   signal?: AbortSignal;
 };
 
-type GMDownloadArgs = [url: string, name: string] | [DownloadRequest];
+type GMDownloadArgs = [url: string | URL, name: string] | [DownloadRequest];
 
 const buildDetails = (args: GMDownloadArgs): DownloadRequest => {
-  if (typeof args[0] === 'string') {
+  if (typeof args[0] === 'string' || args[0] instanceof URL) {
     const url = args[0].toString();
     const name = args[1];
 
