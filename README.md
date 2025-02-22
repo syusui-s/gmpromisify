@@ -35,8 +35,7 @@ These functions are supported:
 
 ### Use as npm package
 
-The functions run only in the browser with some UserScript extension.
-You'll need to use some bundler to import this library into your UserScript.
+It's needed to use some bundler to import this library into your UserScript.
 
 ```sh
 $ npm install @syusui-s/gmpromisify
@@ -76,23 +75,24 @@ import { gmFetch } from '@syusui-s/gmpromisify';
     - Supported
   - `credentials`
     - Supported
+    - The default value is `"same-origin"`.
+    - Greasemonkey limitation: `gmFetch` will include `Cookie` when the request is same-origin and `credentials` is `"omit"` because of [this](https://github.com/greasemonkey/greasemonkey/blob/master/src/bg/on-user-script-xhr.js#L130). Including cookies for CORS is introduced by [this PR](https://github.com/greasemonkey/greasemonkey/pull/2835).
   - `integrity`
-    - Supported (SHA-256, SHA-384 and SHA-512)
+    - Supported [(SHA-256, SHA-384 and SHA-512)](https://w3c.github.io/webappsec-csp/#grammardef-hash-algorithm)
   - `signal`
-    - Supported **ONLY IN Tampermonkey and Violentmonkey**.
+    - Supported **ONLY IN [Tampermonkey](https://www.tampermonkey.net/documentation.php?locale=en#api:GM_download) and [Violentmonkey](https://violentmonkey.github.io/api/gm/#gm_xmlhttprequest)**.
   - `mode`
     - **IGNORED**
   - `cache`
     - **IGNORED**
   - `redirect`
     - **MUST BE `"follow"` or `undefined`**.
-    - The exception will be thrown if the other value is specified.
+    - `TypeError` will be thrown if the other value is specified.
     - TBD: Tampermonkey [supports it](https://www.tampermonkey.net/documentation.php?locale=en#api:GM_xmlhttpRequest).
   - `keepalive`
     - **IGNORED**
   - `referrer`
     - **IGNORED**
-    - TBD: support by using headers
   - `referrerPolicy`
     - **IGNORED**
   - `priority`
@@ -103,19 +103,29 @@ import { gmFetch } from '@syusui-s/gmpromisify';
 A Promise of [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response).
 The promise will be rejected if the error occurred.
 
-- `redirect`
-  - The value will be always `false` even if redirect.
-- `type`
-  - always `"default"`
+- `Response.body`
+  - Supported
+- `Response.headers`
+  - Supported
+- `Response.ok`
+  - Supported
+- `Response.statusText`
+  - Supported
+- `Response.url`
+  - Always `""`
+- `Response.redirected`
+  - Always `false` even if redirected.
+- `Response.type`
+  - Always `"default"`
 
 ### gmDownload
 
 `gmDownload(url: string, filename: string): Promise<void>`
 `gmDownload(detail: DownloadRequestWithSignal): Promise<void>`
 
-`gmDownload` is a wrapper of `GM_download`.
+`gmDownload` is a thin wrapper of `GM_download`.
 
-**NOTE**: This is supported only by Tampermonkey and Violentmonkey, and not supported by Greasemonkey.
+**NOTE**: This is supported only by [Tampermonkey](https://www.tampermonkey.net/documentation.php?locale=en#api:GM_download) and [Violentmonkey](https://violentmonkey.github.io/api/gm/#gm_download), and not supported by Greasemonkey. `TypeError` will be thrown if the function is called in Greasemonkey environment.
 
 #### Arguments compatibility
 
@@ -132,18 +142,6 @@ Additional parameters:
 #### Return value compatibility
 
 A Promise of `void`. The promise will be rejected if the `onerror` callback or `ontimeout` callback is called.
-
-## Build
-
-```sh
-$ npm run build
-```
-
-## Differences from other libraries
-
-### [https://github.com/mitchellmebane/GM_fetch](mitchellmebane/GM_fetch)
-
-- GM_fetch is originally coming from fetch polyfill. It contains some object definitions of fetch standard. gmpromisify relies on the fetch implementation provided by the browser.
 
 ## LICENSE
 
