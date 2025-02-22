@@ -10,9 +10,9 @@ const bannerTemplate = async () => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const pkg = JSON.parse(packageJson);
 
-  return `/* gmpromisify v${pkg.version}
+  return `/* gmpromisify v${pkg.version} - https://github.com/syusui-s/gmpromisify/
  *
- *   Copyright 2022-2023, 2025  ${pkg.author}
+ *   Copyright 2022-2025  ${pkg.author}
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
