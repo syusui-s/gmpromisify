@@ -99,10 +99,13 @@ const buildDetails = async (request: Request): Promise<GMRequestCompatible> => {
     timeout: undefined,
     responseType: 'blob',
     data: await buildData(request),
-    // Whether to include credentials
+    // `credentials`: whether to include cookies
     // for Tampermonkey
     anonymous: !withCredentials,
     // for GreaseMonkey
+    // not documented but supported
+    // https://github.com/greasemonkey/greasemonkey/issues/2826
+    // https://github.com/greasemonkey/greasemonkey/pull/2835
     withCredentials,
   };
 };
