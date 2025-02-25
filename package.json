@@ -1,15 +1,27 @@
 {
   "name": "@syusui-s/gmpromisify",
   "version": "0.1.8",
-  "description": "Promise wrapper for GreaseMonkey/TamperMonkey",
+  "description": "Promise wrapper for GreaseMonkey APIs",
+  "author": "Shusui Moyatani",
+  "license": "Apache-2.0",
+  "type": "module",
+  "browser": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syusui-s/gmpromisify.git"
+  },
+  "keywords": [
+    "greasemonkey",
+    "tampermonkey",
+    "userscript"
+  ],
   "scripts": {
+    "prebuild": "npm run clean",
     "build": "rollup -c && tsc -p tsconfig.build.json",
     "prepare": "husky",
     "lint": "prettier --check . && eslint --cache .",
@@ -20,8 +32,6 @@
     "test": "vitest run --no-watch",
     "clean": "rm -rf dist"
   },
-  "author": "Shusui Moyatani",
-  "license": "Apache-2.0",
   "devDependencies": {
     "@eslint/js": "^9.20.0",
     "@rollup/plugin-terser": "^0.4.4",
