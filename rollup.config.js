@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import banner2 from 'rollup-plugin-banner2';
+import dts from 'rollup-plugin-dts';
 
 const bannerTemplate = async () => {
   const packageJson = await fs.readFile('./package.json', 'utf-8');
@@ -29,25 +30,46 @@ const bannerTemplate = async () => {
 `;
 };
 
-export default {
-  input: 'src/index.ts',
-  plugins: [
-    typescript({
-      outputToFilesystem: true,
-    }),
-  ],
-  output: [
-    {
-      file: 'dist/index.iife.js',
-      format: 'iife',
-      name: 'gmPromisify',
-      plugins: [banner2(bannerTemplate)],
+export default [
+  {
+    input: 'src/index.ts',
+    plugins: [
+      typescript({
+        rootDir: 'src',
+        outputToFilesystem: true,
+      }),
+    ],
+    output: [
+      {
+        file: 'dist/index.esm.js',
+        format: 'es',
+        plugins: [banner2(bannerTemplate)],
+      },
+      {
+        file: 'dist/index.cjs.js',
+        format: 'cjs',
+        plugins: [banner2(bannerTemplate)],
+      },
+      {
+        file: 'dist/index.iife.js',
+        format: 'iife',
+        name: 'gmPromisify',
+        plugins: [banner2(bannerTemplate)],
+      },
+      {
+        file: 'dist/index.iife.min.js',
+        format: 'iife',
+        name: 'gmPromisify',
+        plugins: [terser(), banner2(bannerTemplate)],
+      },
+    ],
+  },
+  {
+    input: './dist/types/index.d.ts',
+    output: {
+      file: 'dist/index.d.ts',
+      format: 'es',
     },
-    {
-      file: 'dist/index.iife.min.js',
-      format: 'iife',
-      plugins: [terser(), banner2(bannerTemplate)],
-      name: 'gmPromisify',
-    },
-  ],
-};
+    plugins: [dts()],
+  },
+];
