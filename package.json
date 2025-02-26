@@ -1,6 +1,6 @@
 {
   "name": "@syusui-s/gmpromisify",
-  "version": "0.1.8",
+  "version": "1.0.0",
   "description": "Promise wrapper for GreaseMonkey APIs",
   "author": "Shusui Moyatani",
   "license": "Apache-2.0",
